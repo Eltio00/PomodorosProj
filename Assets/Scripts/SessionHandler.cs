@@ -10,6 +10,7 @@ public class SessionHandler : MonoBehaviour
     // Add it on another script
     [SerializeField] private GameObject toDos;
     [SerializeField] private GameObject pomodorosContainer;
+    [SerializeField] private GameObject pomodorosHandler;
     [SerializeField] private GameObject session;
 
     //[SerializeField] private GameObject pomodoroImagePrefab;
@@ -26,6 +27,7 @@ public class SessionHandler : MonoBehaviour
     {
         toDos.SetActive(true);
         pomodorosContainer.SetActive(true);
+        pomodorosHandler.SetActive(true);
         timerButtons.SetActive(true);
         arrows.SetActive(true);
         timerText.gameObject.SetActive(true);
@@ -44,7 +46,7 @@ public class SessionHandler : MonoBehaviour
             img.sprite = pomodoroSprite;
 
             RectTransform rt = newImage.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(50, 50);
+            rt.sizeDelta = new Vector2(60, 60);
         }
     }
 
@@ -52,6 +54,7 @@ public class SessionHandler : MonoBehaviour
     {
         if (pomodorosCounter > 0)
         {
+            Destroy(pomodorosContainer.transform.GetChild(pomodorosCounter-1).gameObject);
             --pomodorosCounter;
         }
 

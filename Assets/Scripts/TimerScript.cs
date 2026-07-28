@@ -16,9 +16,10 @@ public class TimerScript : MonoBehaviour
 
     private bool runningTimer = false;
 
-    private bool showArrows = false;
+    //private bool showArrows = false;
     void Update()
     {
+        int pomodoros = SessionHandler.GetPomodorosCounter();
         if (remainingTimer < 0f)
             remainingTimer = 0f;
         else if (remainingTimer > 5999f)
