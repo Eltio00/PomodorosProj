@@ -13,14 +13,23 @@ public class SessionHandler : MonoBehaviour
     [SerializeField] private GameObject pomodorosHandler;
     [SerializeField] private GameObject session;
 
-    //[SerializeField] private GameObject pomodoroImagePrefab;
+    [SerializeField] private GameObject poikiChat;
 
     [SerializeField] private Sprite pomodoroSprite;
     private static int pomodorosCounter = 0;
     // Update is called once per frame
+    private void Start()
+    {
+        AddPomodoros();
+    }
     void Update()
     {
-        
+        if (TimerScript.IsPomoFinished())
+        {
+            Debug.Log($"Entro con valore {TimerScript.IsPomoFinished()}");
+            RemovePomodoros();
+            TimerScript.SetIsPomoFinished(false);
+        }
     }
 
     public void NewSession()
@@ -31,6 +40,7 @@ public class SessionHandler : MonoBehaviour
         timerButtons.SetActive(true);
         arrows.SetActive(true);
         timerText.gameObject.SetActive(true);
+        poikiChat.SetActive(true);
         session.SetActive(false);
     }
 
@@ -52,7 +62,7 @@ public class SessionHandler : MonoBehaviour
 
     public void RemovePomodoros()
     {
-        if (pomodorosCounter > 0)
+        if (pomodorosCounter > 1)
         {
             Destroy(pomodorosContainer.transform.GetChild(pomodorosCounter-1).gameObject);
             --pomodorosCounter;
@@ -61,4 +71,9 @@ public class SessionHandler : MonoBehaviour
     }
 
     public static int GetPomodorosCounter() { return pomodorosCounter; }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

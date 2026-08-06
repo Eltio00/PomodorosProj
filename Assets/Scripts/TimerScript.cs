@@ -1,78 +1,142 @@
-using System;
 using System.Collections;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 
 public class TimerScript : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private float remainingTimer = 0;
+    [SerializeField] private float initialTimer = 0;
     [SerializeField] private GameObject arrows;
     [SerializeField] private GameObject timerButtons;
+    [SerializeField] private float pauseTimer = 0f;
+    [SerializeField] private GameObject pomodorosHandler;
+    [SerializeField] private float transitionDelay = 1.5f;
 
-    // The pause and the time are expressed in milliseconds
     private int pomodors = 0;
 
-    private bool runningTimer = false;
+    private float startInitTimer = 0f;
+    private float startPauseTimer = 0f;
 
-    //private bool showArrows = false;
+    private bool runningTimer = false;
+    private bool state = true;
+    private bool isTransitioning = false;
+    private static bool isPomoFinished = false;
+
+    void Start()
+    {
+        startInitTimer = initialTimer;
+        startPauseTimer = pauseTimer;
+    }
+
     void Update()
     {
-        int pomodoros = SessionHandler.GetPomodorosCounter();
-        if (remainingTimer < 0f)
-            remainingTimer = 0f;
-        else if (remainingTimer > 5999f)
-            remainingTimer = 5999f;
+        if (!isTransitioning)
+        {
+            float currentTimer = state ? initialTimer : pauseTimer;
+            currentTimer = ExpireTimer(currentTimer);
 
+            if (state)
+                initialTimer = currentTimer;
+            else
+                pauseTimer = currentTimer;
+
+            int minutes = Mathf.FloorToInt(currentTimer / 60);
+            int seconds = Mathf.FloorToInt(currentTimer % 60);
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+        else
+        {
+            float currentTimer = state ? startPauseTimer : startInitTimer;
+
+            int minutes = Mathf.FloorToInt(currentTimer / 60);
+            int seconds = Mathf.FloorToInt(currentTimer % 60);
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        }
+    }
+
+    private float ExpireTimer(float time)
+    {
         if (runningTimer)
-            if (remainingTimer > 0)
+        {
+            if (time > 0)
             {
-                remainingTimer -= Time.deltaTime;
+                time -= Time.deltaTime;
+                if (time < 0) time = 0;
             }
-            else if (remainingTimer < 0)
+            else
             {
-                remainingTimer = pomodors;
-                runningTimer = false;
+                StartCoroutine(TransitionToNextState());
+            }
+        }
+        return time;
+    }
 
-            }
-        int minutes = Mathf.FloorToInt(remainingTimer / 60);
-        int seconds = Mathf.FloorToInt(remainingTimer % 60);
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    private IEnumerator TransitionToNextState()
+    {
+        isTransitioning = true;
+        yield return new WaitForSeconds(transitionDelay);
+
+        if (state)
+        {
+            pauseTimer = startPauseTimer;
+            state = false;
+        }
+        else
+        {
+            initialTimer = startInitTimer;
+            state = true;
+            isPomoFinished = true;
+
+            if (SessionHandler.GetPomodorosCounter() <= 1)
+                runningTimer = false;
+        }
+
+        isTransitioning = false;
     }
 
     public void StratTimer()
     {
         runningTimer = true;
         arrows.SetActive(false);
+        pomodorosHandler.SetActive(false);
     }
+
     public void PauseTimer()
     {
         runningTimer = false;
         arrows.SetActive(true);
+        pomodorosHandler.SetActive(true);
     }
+
     public void StopTimer()
     {
-        remainingTimer = 0;
+        initialTimer = startInitTimer;
+        pauseTimer = startPauseTimer;
+        runningTimer = false;
+        state = true;
+        isTransitioning = false;
+        StopAllCoroutines();
         arrows.SetActive(true);
     }
 
     public void ChooseTimer()
     {
         if (!runningTimer)
-            if (arrows.activeSelf)
-               arrows.SetActive(false);
-            else
-                arrows.SetActive(true);
+            arrows.SetActive(!arrows.activeSelf);
     }
-
 
     public void DecreseTime(float time)
     {
-        remainingTimer -= time;
+        initialTimer -= time;
+        if (initialTimer < 0) initialTimer = 0;
     }
+
     public void IncreseTimer(float time)
     {
-        remainingTimer += time;
+        initialTimer += time;
     }
+
+    public static bool IsPomoFinished() { return isPomoFinished; }
+    public static void SetIsPomoFinished(bool finished) { isPomoFinished = finished; }
 }
