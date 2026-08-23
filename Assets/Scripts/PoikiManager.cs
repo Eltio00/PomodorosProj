@@ -133,14 +133,18 @@ public class PoikiManager : MonoBehaviour
 
     public async void SaveNote(string noteText, string temaId)
     {
-        if (NoteAlreadyExists(noteText, temaId))
+        string normalizedText = TextNormalizer.NormalizeForChunking(noteText);
+
+        if (NoteAlreadyExists(normalizedText, temaId))
         {
             Debug.Log($"Note already present in topic '{temaId}', skipping insertion.");
             return;
         }
 
-        await rag.Add(noteText, temaId);
-        RegisterNote(noteText, temaId);
+        Debug.Log($"[DEBUG] First 300 chars of normalized text: {normalizedText.Substring(0, Mathf.Min(300, normalizedText.Length))}");
+
+        await rag.Add(normalizedText, temaId);
+        RegisterNote(normalizedText, temaId);
         Debug.Log($"Poiki has added the note to the topic '{temaId}'.");
 
         rag.Save(RagDataFile);
@@ -150,8 +154,11 @@ public class PoikiManager : MonoBehaviour
     public async void AskTheModel(string userQuery, string temaId)
     {
         rag.ReturnChunks(true);
-        (string[] chunkFound, float[] distances) = await rag.Search(userQuery, 4, temaId);
+        (string[] chunkFound, float[] distances) = await rag.Search(userQuery, 10, temaId);
 
+        Debug.Log($"Retrieved {chunkFound.Length} chunks for query '{userQuery}':");
+        for (int i = 0; i < chunkFound.Length; i++)
+            Debug.Log($"  [{i}] (distance: {distances[i]:F3}) {chunkFound[i]}");
         string context = "Poiki has found some relevant notes:\n";
         IsReplyDone = false;
         foreach (string chunk in chunkFound)
