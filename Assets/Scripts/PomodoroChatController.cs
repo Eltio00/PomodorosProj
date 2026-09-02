@@ -1,9 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Text;
-using System.Xml.Linq;
-using UglyToad.PdfPig;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -13,17 +9,21 @@ public class PomodoroChatController : MonoBehaviour
 {
     [SerializeField] private PoikiManager poikiManager;
     [SerializeField] private TMP_InputField inputField;
-    [SerializeField] private TMP_Text answareText;
     [SerializeField] private Button sendButton;
+
+    [Header("Chat UI")]
+    [SerializeField] private GameObject chatBubblePrefab;
+    [SerializeField] private Transform chatContent;
+    [SerializeField] private ScrollRect scrollRect;
 
     private string currentTeme = "General Study";
     private static List<char> currentText = new List<char>();
+    private ChatBubble currentAssistantBubble; // la bolla che si sta riempiendo in streaming
 
     private string pdfFileType;
     private string txtFileType;
     private string docxFileType;
     private string mdFileType;
-
 
     void Start()
     {
@@ -33,15 +33,18 @@ public class PomodoroChatController : MonoBehaviour
         mdFileType = NativeFilePicker.ConvertExtensionToFileType("md");
     }
 
-
     void Update()
     {
-        if (poikiManager.IsReplyDone && 
-            currentText != null && 
+        if (poikiManager.IsReplyDone &&
+            currentText != null &&
             currentText.Count > 0)
         {
-            answareText.text += currentText[0];
+            char nextChar = currentText[0];
+            if (currentAssistantBubble != null)
+                currentAssistantBubble.AppendText(nextChar.ToString());
             currentText.RemoveAt(0);
+
+            ScrollToBottom();
         }
     }
 
@@ -52,15 +55,40 @@ public class PomodoroChatController : MonoBehaviour
         string question = inputField.text;
         if (string.IsNullOrWhiteSpace(question)) return;
 
+        AddBubble(question, isUser: true);
+        currentAssistantBubble = AddBubble("", isUser: false);
 
-        answareText.text = "";
         poikiManager.AskTheModel(question, currentTeme);
         inputField.text = "";
     }
 
+    private ChatBubble AddBubble(string text, bool isUser)
+    {
+        GameObject bubbleObj = Instantiate(chatBubblePrefab, chatContent);
+        ChatBubble bubble = bubbleObj.GetComponent<ChatBubble>();
+        bubble.Setup(text, isUser);
+        ScrollToBottom();
+        return bubble;
+    }
+
+    private void ScrollToBottom()
+    {
+        Canvas.ForceUpdateCanvases();
+        scrollRect.verticalNormalizedPosition = 0f;
+    }
+
     public static void SetCurrentText(List<char> text) { currentText = text; }
 
+    public void RestoreConversationHistory(List<ChatMessageData> savedConversation)
+    {
+        if (savedConversation == null) return;
 
+        foreach (Transform child in chatContent)
+            Destroy(child.gameObject);
+
+        foreach (var msg in savedConversation)
+            AddBubble(msg.content, isUser: msg.role == "user");
+    }
     public void PickFile()
     {
         if (NativeFilePicker.IsFilePickerBusy())
@@ -126,10 +154,8 @@ public class PomodoroChatController : MonoBehaviour
         }, new string[] { pdfFileType, txtFileType, docxFileType, mdFileType });
     }
 
-    // placeholder: hook this to your actual UI feedback system
     void ShowUserMessage(string message)
     {
         Debug.Log($"[User message] {message}");
-        // TODO: replace with a toast/popup in the actual UI
     }
 }

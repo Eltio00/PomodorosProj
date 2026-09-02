@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LLMUnity;
-using TMPro;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,9 +10,10 @@ public class PoikiManager : MonoBehaviour
 {
     [SerializeField] public RAG rag;
     [SerializeField] public LLMAgent llmAgent;
-
     [SerializeField] private string text;
+    private List<ChatMessageData> conversationHistory = new List<ChatMessageData>();
 
+    [SerializeField] private PomodoroChatController pomodoroChatController;
     public bool IsModelReady = false;
     public bool IsReplyDone = true;
 
@@ -153,6 +153,8 @@ public class PoikiManager : MonoBehaviour
 
     public async void AskTheModel(string userQuery, string temaId)
     {
+        conversationHistory.Add(new ChatMessageData { role = "user", content = userQuery });
+
         rag.ReturnChunks(true);
         (string[] chunkFound, float[] distances) = await rag.Search(userQuery, 10, temaId);
 
@@ -181,6 +183,8 @@ public class PoikiManager : MonoBehaviour
         PomodoroChatController.SetCurrentText(text.ToList());
         Debug.Log("Poiki answered.");
 
+        conversationHistory.Add(new ChatMessageData { role = "assistant", content = text });
+
         _ = llmAgent.SaveHistory();
     }
 
@@ -193,5 +197,15 @@ public class PoikiManager : MonoBehaviour
     {
         if (pauseStatus)
             SavePersistedData();
+    }
+    public List<ChatMessageData> GetConversationHistory()
+    {
+        return conversationHistory;
+    }
+
+    public void RestoreConversationHistory(List<ChatMessageData> savedConversation)
+    {
+        conversationHistory = savedConversation ?? new List<ChatMessageData>();
+        pomodoroChatController.RestoreConversationHistory(conversationHistory);
     }
 }

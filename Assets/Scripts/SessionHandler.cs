@@ -12,11 +12,10 @@ public class SessionHandler : MonoBehaviour
     [SerializeField] private GameObject pomodorosContainer;
     [SerializeField] private GameObject pomodorosHandler;
     [SerializeField] private GameObject session;
-
     [SerializeField] private GameObject poikiChat;
-
     [SerializeField] private Sprite pomodoroSprite;
     private static int pomodorosCounter = 0;
+
     // Update is called once per frame
     private void Start()
     {
@@ -71,9 +70,12 @@ public class SessionHandler : MonoBehaviour
     }
 
     public static int GetPomodorosCounter() { return pomodorosCounter; }
-
     public void Quit()
     {
         Application.Quit();
+    }
+    public void SetPomodorosCounter(int count)
+    {
+        pomodorosCounter = count;
     }
 }

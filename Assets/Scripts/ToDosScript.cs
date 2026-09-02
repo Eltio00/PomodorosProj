@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,14 @@ public class ToDosScript : MonoBehaviour
     private Dictionary<GameObject, float> lastClickTimes = new Dictionary<GameObject, float>();
     private const float doubleClickThreshold = 0.5f;
 
+    private List<ToDos> currentToDos;
+
     public void CheckItem(TMP_Text text, bool isOn)
     {
+        ToDos matchingToDo = currentToDos.Find(t => t.toDosText == text.text);
+        if (matchingToDo != null)
+            matchingToDo.isCompleted = isOn;
+
         text.text = isOn ? $"<s>{text.text}</s>" : text.text.Replace("<s>", "").Replace("</s>", "");
     }
 
@@ -76,6 +83,7 @@ public class ToDosScript : MonoBehaviour
         inputField.ActivateInputField();
 
         listItems.Add(newItem);
+        currentToDos.Add(new ToDos { toDosText = text, isCompleted = false });
         lastClickTimes[newItem] = -10f;
     }
 
@@ -105,6 +113,28 @@ public class ToDosScript : MonoBehaviour
         else
         {
             lastClickTimes[itemToChange] = Time.time;
+        }
+    }
+    public List<ToDos> GetCurrentToDos(){ return currentToDos; }
+    public void LoadToDos(List<ToDos> savedToDos)
+    {
+        // Pulisci gli elementi UI esistenti, se presenti
+        foreach (var item in listItems)
+            Destroy(item);
+        listItems.Clear();
+        currentToDos.Clear();
+
+        foreach (var todo in savedToDos)
+        {
+            AddToDo(todo.toDosText);
+            currentToDos[currentToDos.Count - 1].isCompleted = todo.isCompleted;
+
+            if (todo.isCompleted)
+            {
+                GameObject lastItem = listItems[listItems.Count - 1];
+                Toggle toggle = lastItem.transform.GetChild(0).GetComponent<Toggle>();
+                toggle.isOn = true;
+            }
         }
     }
 }

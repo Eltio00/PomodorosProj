@@ -12,7 +12,7 @@ public class TimerScript : MonoBehaviour
     [SerializeField] private GameObject pomodorosHandler;
     [SerializeField] private float transitionDelay = 1.5f;
 
-    private int pomodors = 0;
+    //private int pomodors = 0;
 
     private float startInitTimer = 0f;
     private float startPauseTimer = 0f;
@@ -139,4 +139,9 @@ public class TimerScript : MonoBehaviour
 
     public static bool IsPomoFinished() { return isPomoFinished; }
     public static void SetIsPomoFinished(bool finished) { isPomoFinished = finished; }
+    public float GetCurrentTime() { return initialTimer; }
+    public void SetCurrentTime(float time)
+    {
+        initialTimer = time;
+    }
 }
