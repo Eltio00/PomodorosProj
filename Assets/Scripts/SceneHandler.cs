@@ -18,11 +18,13 @@ public class SceneHandler : MonoBehaviour
     {
         ++currentSceneIndex;
         ChangeScene();
+        //ButtonHoverHandler.Instance.SetImage(Constants.NEXT_SCENE);
     }
     public void BackwardScene()
     {
         --currentSceneIndex;
         ChangeScene();
+        //ButtonHoverHandler.Instance.SetImage(Constants.PREVIOUS_SCENE);
     }
 
     private int ChangeScene()

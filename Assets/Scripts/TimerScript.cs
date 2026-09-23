@@ -6,7 +6,7 @@ public class TimerScript : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private float initialTimer = 0;
-    [SerializeField] private GameObject arrows;
+    [SerializeField] private GameObject[] arrows;
     [SerializeField] private GameObject timerButtons;
     [SerializeField] private float pauseTimer = 0f;
     [SerializeField] private GameObject pomodorosHandler;
@@ -98,14 +98,16 @@ public class TimerScript : MonoBehaviour
     public void StratTimer()
     {
         runningTimer = true;
-        arrows.SetActive(false);
+        arrows[0].gameObject.SetActive(false);
+        arrows[1].gameObject.SetActive(false);
         pomodorosHandler.SetActive(false);
     }
 
     public void PauseTimer()
     {
         runningTimer = false;
-        arrows.SetActive(true);
+        arrows[0].gameObject.SetActive(true);
+        arrows[1].gameObject.SetActive(true);
         pomodorosHandler.SetActive(true);
     }
 
@@ -117,13 +119,17 @@ public class TimerScript : MonoBehaviour
         state = true;
         isTransitioning = false;
         StopAllCoroutines();
-        arrows.SetActive(true);
+        arrows[0].gameObject.SetActive(true);
+        arrows[1].gameObject.SetActive(true);
     }
 
     public void ChooseTimer()
     {
-        if (!runningTimer)
-            arrows.SetActive(!arrows.activeSelf);
+        if (runningTimer)
+            return;
+
+        arrows[0].gameObject.SetActive(!arrows[0].gameObject.activeSelf);
+        arrows[1].gameObject.SetActive(!arrows[1].gameObject.activeSelf);
     }
 
     public void DecreseTime(float time)

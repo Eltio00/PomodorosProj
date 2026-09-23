@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +11,8 @@ public class MenuButtonHandler : MonoBehaviour
     [SerializeField] private TimerScript pomodoroTimer;
     [SerializeField] private SessionHandler sessionHandler;
     [SerializeField] private ToDosScript toDosHandler;
+    [SerializeField] private GameObject menuButton;
+    [SerializeField] private GameObject menuPanel;
 
     public void SaveSession()
     {
@@ -58,5 +62,16 @@ public class MenuButtonHandler : MonoBehaviour
         poikiManager.RestoreConversationHistory(savedConversation);
 
         Debug.Log("Session restored successfully.");
+    }
+
+    public void OpenMenu() { 
+        menuButton.SetActive(false); 
+        menuPanel.SetActive(true); 
+    }
+
+    public void CloseMenu() {
+
+        menuPanel.SetActive(false);
+        menuButton.SetActive(true);
     }
 }
