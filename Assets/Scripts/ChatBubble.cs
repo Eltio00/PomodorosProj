@@ -1,17 +1,21 @@
+using System;
 using TMPro;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class ChatBubble : MonoBehaviour
 {
-    private TMP_Text messageText;
+    [SerializeField] private TMP_Text messageText;
 
-    void Awake()
+    void Start()
     {
-        messageText = GetComponent<TMP_Text>();
+        Debug.Log($"[Debug Text]: {messageText.name}");
     }
 
     public void Setup(string text, bool isUser)
     {
+
+        Debug.Log($"[Text from {isUser}]: {text}");
         messageText.text = text;
         messageText.alignment = isUser ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
     }

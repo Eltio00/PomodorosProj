@@ -61,4 +61,10 @@ public class Constants
 
     public const string VOLUME = "Volume";
     public const string VOLUME_HOVER = "Volume_Hover";
+
+    public const string DROPDOWN_BTN = "DropDownButton";
+    public const string DROPDOWN_BTN_OPEN = "DropDownButtonOpen";
+    public const string DROPDOWN_BTN_CLOSE = "DropDownButtonClose";
+    public const string TODO_SCROLL = "ToDoScroll";
+    public const string TODO_HANDLER_LAYOUT = "ButtonHandlerLayout";
 }

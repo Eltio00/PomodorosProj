@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuButtonHandler : MonoBehaviour
 {
@@ -11,8 +12,27 @@ public class MenuButtonHandler : MonoBehaviour
     [SerializeField] private TimerScript pomodoroTimer;
     [SerializeField] private SessionHandler sessionHandler;
     [SerializeField] private ToDosScript toDosHandler;
+
     [SerializeField] private GameObject menuButton;
     [SerializeField] private GameObject menuPanel;
+
+    [Header("Todo Handling")]
+    [SerializeField] private GameObject toDoContainer;
+    [SerializeField] private Sprite toDosSpriteCrouch;
+    [SerializeField] private Sprite toDosSprite;
+    [SerializeField] private GameObject toDosButtons;
+
+    private GameObject dropDownOpen;
+    private GameObject dropDownClose;
+    private GameObject toDosPanel;
+    
+    void Start()
+    {
+        dropDownOpen = GameObject.Find(Constants.DROPDOWN_BTN_OPEN);
+        dropDownClose = GameObject.Find(Constants.DROPDOWN_BTN_CLOSE);
+        toDosPanel = GameObject.Find(Constants.TODO_SCROLL);
+        Debug.Log($"Open: {dropDownOpen.name}; Close: {dropDownClose.name}; Panel: {toDosPanel.name}; Buttons: {toDosButtons.name}");
+    }
 
     public void SaveSession()
     {
@@ -33,9 +53,6 @@ public class MenuButtonHandler : MonoBehaviour
 
         if (string.IsNullOrEmpty(savedScene) || savedScene != SceneManager.GetActiveScene().name)
         {
-            // Different (or no) scene saved: load it first.
-            // Restoring the rest of the state needs to happen AFTER that
-            // scene's objects exist, so it can't happen right here.
             SceneManager.LoadScene(savedScene);
             return;
         }
@@ -64,14 +81,37 @@ public class MenuButtonHandler : MonoBehaviour
         Debug.Log("Session restored successfully.");
     }
 
-    public void OpenMenu() { 
-        menuButton.SetActive(false); 
-        menuPanel.SetActive(true); 
+    public void OpenMenu()
+    {
+        menuButton.SetActive(false);
+        menuPanel.SetActive(true);
     }
 
-    public void CloseMenu() {
-
+    public void CloseMenu()
+    {
         menuPanel.SetActive(false);
         menuButton.SetActive(true);
+    }
+    public void OpenToDos()
+    {
+        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 200f);
+        //Image img = toDoContainer.GetComponent<Image>();
+        //img.sprite = toDosSpriteCrouch;
+        dropDownOpen.SetActive(false);
+        dropDownClose.SetActive(true);
+        toDosPanel.SetActive(true);
+        toDosButtons.SetActive(true);
+    }
+    public void CloseToDos()
+    {
+        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
+        //Image img = toDoContainer.GetComponent<Image>();
+        //img.sprite = toDosSprite;
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 780f);
+        dropDownOpen.SetActive(true);
+        dropDownClose.SetActive(false);
+        toDosPanel.SetActive(false);
+        toDosButtons.SetActive(false);
     }
 }

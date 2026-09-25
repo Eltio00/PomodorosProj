@@ -27,11 +27,15 @@ public class ButtonHoverHandler : MonoBehaviour
     [SerializeField] private Sprite quitImg;
     [SerializeField] private Sprite volumeImg;
     [SerializeField] private Sprite creditsImg;
-
+    
     [Header("Press Simulation")]
     [SerializeField] private float pressDuration = 0.15f;
+    [SerializeField] private GameObject menuOpen;
+    [SerializeField] private GameObject dropDownClose;
 
-    private Image currentImage;
+    [Header("Sound")]
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip buttonClickSound;
 
     private Dictionary<Button, Sprite> allButtonsHovered = new Dictionary<Button,Sprite>();
     public static ButtonHoverHandler Instance { get; private set; }
@@ -51,18 +55,21 @@ public class ButtonHoverHandler : MonoBehaviour
 
     void Start()
     {
-        Button[] tmpBtns = FindObjectsByType<Button>(FindObjectsSortMode.None);
+        Button[] tmpBtns = FindObjectsByType<Button>();
+        audioSource = this.GetComponent<AudioSource>();
 
         foreach (Button btn in tmpBtns)
         {
             Image img = btn.GetComponent<Image>();
 
             if (img == null || img.sprite == null)
-                continue; // salta bottoni senza sprite, evita il crash
+                continue;
 
             AddToButtonMap(img.sprite.name, btn);
             btn.onClick.AddListener(() => OnButtonClicked(btn));
         }
+        menuOpen.SetActive(false);
+        dropDownClose.SetActive(false);
     }
     private void AddToButtonMap(string btnName, Button btn)
     {
@@ -87,10 +94,12 @@ public class ButtonHoverHandler : MonoBehaviour
         if (btnName.Contains(Constants.VOLUME)) allButtonsHovered[btn] = volumeImg;
     }
 
-    private void OnButtonClicked(Button btn)
+    public void OnButtonClicked(Button btn)
     {
         if (allButtonsHovered.TryGetValue(btn, out Sprite pressedSprite))
         {
+            if (audioSource)
+                audioSource.PlayOneShot(buttonClickSound);
             StartCoroutine(SimulatePress(btn, pressedSprite));
         }
     }

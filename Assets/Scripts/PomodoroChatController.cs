@@ -12,19 +12,21 @@ public class PomodoroChatController : MonoBehaviour
     [SerializeField] private Button sendButton;
 
     [Header("Chat UI")]
-    [SerializeField] private GameObject chatBubblePrefab;
+    [SerializeField] private GameObject poikiBubblePrefab;
+    [SerializeField] private GameObject questionBubblePrefab;
     [SerializeField] private Transform chatContent;
     [SerializeField] private ScrollRect scrollRect;
 
     private string currentTeme = "General Study";
     private static List<char> currentText = new List<char>();
-    private ChatBubble currentAssistantBubble; // la bolla che si sta riempiendo in streaming
+    private ChatBubble currentAssistantBubble = null;
 
     private string pdfFileType;
     private string txtFileType;
     private string docxFileType;
     private string mdFileType;
 
+    private bool poikiIsAnswering = true;
     void Start()
     {
         pdfFileType = NativeFilePicker.ConvertExtensionToFileType("pdf");
@@ -35,9 +37,10 @@ public class PomodoroChatController : MonoBehaviour
 
     void Update()
     {
-        if (poikiManager.IsReplyDone &&
-            currentText != null &&
-            currentText.Count > 0)
+        if (poikiManager.IsReplyDone && currentAssistantBubble == null && !poikiIsAnswering)
+            currentAssistantBubble = AddBubble("", isUser: false);
+
+        if (poikiManager.IsReplyDone && currentText != null && currentText.Count > 0)
         {
             char nextChar = currentText[0];
             if (currentAssistantBubble != null)
@@ -45,7 +48,7 @@ public class PomodoroChatController : MonoBehaviour
             currentText.RemoveAt(0);
 
             ScrollToBottom();
-        }
+        } 
     }
 
     public void OnClickSend()
@@ -56,15 +59,20 @@ public class PomodoroChatController : MonoBehaviour
         if (string.IsNullOrWhiteSpace(question)) return;
 
         AddBubble(question, isUser: true);
-        currentAssistantBubble = AddBubble("", isUser: false);
 
         poikiManager.AskTheModel(question, currentTeme);
         inputField.text = "";
+        poikiIsAnswering = true;
     }
 
     private ChatBubble AddBubble(string text, bool isUser)
     {
-        GameObject bubbleObj = Instantiate(chatBubblePrefab, chatContent);
+        GameObject bubbleObj;
+        if (isUser)
+            bubbleObj = Instantiate(questionBubblePrefab, chatContent);
+        else
+            bubbleObj = Instantiate(poikiBubblePrefab, chatContent);
+
         ChatBubble bubble = bubbleObj.GetComponent<ChatBubble>();
         bubble.Setup(text, isUser);
         ScrollToBottom();
@@ -75,6 +83,7 @@ public class PomodoroChatController : MonoBehaviour
     {
         Canvas.ForceUpdateCanvases();
         scrollRect.verticalNormalizedPosition = 0f;
+        poikiIsAnswering = false;
     }
 
     public static void SetCurrentText(List<char> text) { currentText = text; }
