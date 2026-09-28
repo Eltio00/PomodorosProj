@@ -208,4 +208,8 @@ public class PoikiManager : MonoBehaviour
         conversationHistory = savedConversation ?? new List<ChatMessageData>();
         pomodoroChatController.RestoreConversationHistory(conversationHistory);
     }
+    public void DeleteConversations()
+    {
+        
+    }
 }

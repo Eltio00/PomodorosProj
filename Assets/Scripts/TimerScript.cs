@@ -5,14 +5,15 @@ using UnityEngine;
 public class TimerScript : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI pauseTimerText;
+    [SerializeField] private TextMeshProUGUI studyTmerText;
+    
     [SerializeField] private float initialTimer = 0;
     [SerializeField] private GameObject[] arrows;
     [SerializeField] private GameObject timerButtons;
     [SerializeField] private float pauseTimer = 0f;
     [SerializeField] private GameObject pomodorosHandler;
     [SerializeField] private float transitionDelay = 1.5f;
-
-    //private int pomodors = 0;
 
     private float startInitTimer = 0f;
     private float startPauseTimer = 0f;
@@ -22,15 +23,35 @@ public class TimerScript : MonoBehaviour
     private bool isTransitioning = false;
     private static bool isPomoFinished = false;
 
+    private GameObject popup;
+    [SerializeField] private SessionHandler _sessionHandler;
     void Start()
     {
         startInitTimer = initialTimer;
         startPauseTimer = pauseTimer;
+        popup = GameObject.Find(Constants.POPUP);
     }
 
     void Update()
     {
-        if (!isTransitioning)
+        if (popup != null && popup.gameObject.activeSelf)
+        {
+            int minutes = 0;
+            int seconds = 0;
+            // Setting initial timer
+            minutes = Mathf.FloorToInt(initialTimer / 60);
+            seconds = Mathf.FloorToInt(initialTimer % 60);
+            studyTmerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            
+            // Setting pause timer
+            minutes = Mathf.FloorToInt(pauseTimer / 60);
+            seconds = Mathf.FloorToInt(pauseTimer % 60);
+            pauseTimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            
+            return;
+        }
+        
+        if (!isTransitioning && !popup.gameObject.activeSelf)
         {
             float currentTimer = state ? initialTimer : pauseTimer;
             currentTimer = ExpireTimer(currentTimer);
@@ -142,6 +163,27 @@ public class TimerScript : MonoBehaviour
     {
         initialTimer += time;
     }
+    
+    public void DecreseStudyTime(float time)
+    {
+        initialTimer -= time;
+        if (initialTimer < 0) initialTimer = 0;
+    }
+
+    public void IncreseStudyTimer(float time)
+    {
+        initialTimer += time;
+    }
+    public void DecresePauseTime(float time)
+    {
+        pauseTimer -= time;
+        if (pauseTimer < 0) pauseTimer = 0;
+    }
+
+    public void IncresePauseTimer(float time)
+    {
+        pauseTimer += time;
+    }
 
     public static bool IsPomoFinished() { return isPomoFinished; }
     public static void SetIsPomoFinished(bool finished) { isPomoFinished = finished; }
@@ -149,5 +191,19 @@ public class TimerScript : MonoBehaviour
     public void SetCurrentTime(float time)
     {
         initialTimer = time;
+    }
+
+    public void Apply()
+    {
+        _sessionHandler.ActivateHandlingButtons();
+        startInitTimer = initialTimer;
+        startPauseTimer = pauseTimer;
+        popup.SetActive(false);
+    }
+
+    public void Cancel()
+    {
+        popup.SetActive(false);
+        _sessionHandler.QuitPopup();
     }
 }

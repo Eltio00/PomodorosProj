@@ -5,26 +5,16 @@ public class SceneHandler : MonoBehaviour
     [SerializeField] private GameObject[] scenes;
     private int currentSceneIndex = 0;
     [SerializeField] private Light sceneLight;
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
+    
     public void ForwardScene()
     {
         ++currentSceneIndex;
         ChangeScene();
-        //ButtonHoverHandler.Instance.SetImage(Constants.NEXT_SCENE);
     }
     public void BackwardScene()
     {
         --currentSceneIndex;
         ChangeScene();
-        //ButtonHoverHandler.Instance.SetImage(Constants.PREVIOUS_SCENE);
     }
 
     private int ChangeScene()
@@ -69,7 +59,6 @@ public class SceneHandler : MonoBehaviour
         scenes[1].SetActive(true);
         scenes[2].SetActive(false);
         scenes[3].SetActive(false);
-        //SetLight(new Vector3(-10f, 260f, 0f), 1500f, 2f, new Color(1f, 0.816f, 0.816f));
         SetLight(new Vector3(0f, 0f, 0f), 10032f, 2.2f, new Color(1f, 0.808f, 0.620f));
     }
     private void OpenMachineHouseScene()
@@ -78,7 +67,6 @@ public class SceneHandler : MonoBehaviour
         scenes[1].SetActive(false);
         scenes[2].SetActive(true);
         scenes[3].SetActive(false);
-        //SetLight(new Vector3(445f, -187f, 0f), 4000f, 5f, new Color(0.306f, 0.914f, 0.443f));
         SetLight(new Vector3(0f, 0f, 0f), 10032f, 2f, new Color(1f, 0.808f, 0.620f));
     }
     private void OpenAndromedaKatosScene()
@@ -96,5 +84,16 @@ public class SceneHandler : MonoBehaviour
         sceneLight.colorTemperature = temperature;
         sceneLight.intensity = intensity;
         sceneLight.color = color;
+    }
+
+    public GameObject GetCurrentScene() { return scenes[currentSceneIndex]; }
+
+    public void SetScene(string sceneName)
+    {
+        if (sceneName.Contains(Constants.BALOON_SCENE)) OpenBaloonScene();
+        else if (sceneName.Contains(Constants.SPACE_PORTAL_SCENE)) OpenSpaceScene();
+        else if (sceneName.Contains(Constants.MACHINE_HOUSE_SCENE)) OpenMachineHouseScene();
+        else if (sceneName.Contains(Constants.ANDROMEDA_KATO_SCENE)) OpenAndromedaKatosScene();
+        else Debug.Log("No scene found");
     }
 }

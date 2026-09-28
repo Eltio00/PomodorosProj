@@ -1,31 +1,27 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class SessionHandler : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private GameObject arrows;
-    [SerializeField] private GameObject timerButtons;
-
-    // Add it on another script
-    [SerializeField] private GameObject toDos;
     [SerializeField] private GameObject pomodorosContainer;
     [SerializeField] private GameObject pomodorosHandler;
-    [SerializeField] private GameObject session;
-    [SerializeField] private GameObject poikiChat;
     [SerializeField] private Sprite pomodoroSprite;
+    
     private static int pomodorosCounter = 0;
-
-    // Update is called once per frame
+    
+    [SerializeField] private GameObject[] timerBtns;
+    [SerializeField] private GameObject newSessionBtn;
+    [SerializeField] private GameObject handlingPopUp;
+    
+    
     private void Start()
     {
         AddPomodoros();
+        handlingPopUp.gameObject.SetActive(false);   
     }
     void Update()
     {
         if (TimerScript.IsPomoFinished())
         {
-            Debug.Log($"Entro con valore {TimerScript.IsPomoFinished()}");
             RemovePomodoros();
             TimerScript.SetIsPomoFinished(false);
         }
@@ -33,14 +29,8 @@ public class SessionHandler : MonoBehaviour
 
     public void NewSession()
     {
-        toDos.SetActive(true);
-        pomodorosContainer.SetActive(true);
-        pomodorosHandler.SetActive(true);
-        timerButtons.SetActive(true);
-        arrows.SetActive(true);
-        timerText.gameObject.SetActive(true);
-        poikiChat.SetActive(true);
-        session.SetActive(false);
+        newSessionBtn.SetActive(false);
+        handlingPopUp.gameObject.SetActive(true);
     }
 
     public void AddPomodoros()
@@ -78,4 +68,10 @@ public class SessionHandler : MonoBehaviour
     {
         pomodorosCounter = count;
     }
+    public void ActivateHandlingButtons()
+    {
+        foreach (GameObject btn in timerBtns)  
+            btn.SetActive(true);
+    }
+    public void QuitPopup(){ newSessionBtn.SetActive(true);}
 }

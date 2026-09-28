@@ -27,7 +27,10 @@ public class ButtonHoverHandler : MonoBehaviour
     [SerializeField] private Sprite quitImg;
     [SerializeField] private Sprite volumeImg;
     [SerializeField] private Sprite creditsImg;
-    
+    [SerializeField] private Sprite newSessionImg;
+    [SerializeField] private Sprite applyImg;
+    [SerializeField] private Sprite cancelImg;
+
     [Header("Press Simulation")]
     [SerializeField] private float pressDuration = 0.15f;
     [SerializeField] private GameObject menuOpen;
@@ -60,13 +63,17 @@ public class ButtonHoverHandler : MonoBehaviour
 
         foreach (Button btn in tmpBtns)
         {
+            Debug.Log($"[Debug Text] Button Name: {btn.name}");
             Image img = btn.GetComponent<Image>();
 
             if (img == null || img.sprite == null)
                 continue;
-
+            
             AddToButtonMap(img.sprite.name, btn);
             btn.onClick.AddListener(() => OnButtonClicked(btn));
+            if (btn.name.Contains("Stop") || btn.name.Contains("Play") ||
+                btn.name.Contains("Pause"))
+                btn.gameObject.SetActive(false);
         }
         menuOpen.SetActive(false);
         dropDownClose.SetActive(false);
@@ -92,6 +99,9 @@ public class ButtonHoverHandler : MonoBehaviour
         if (btnName.Contains(Constants.SEND)) allButtonsHovered[btn] = sendImg;
         if (btnName.Contains(Constants.STOP)) allButtonsHovered[btn] = stopImg;
         if (btnName.Contains(Constants.VOLUME)) allButtonsHovered[btn] = volumeImg;
+        if (btnName.Contains(Constants.NEW_SESSION)) allButtonsHovered[btn] = newSessionImg;
+        if (btnName.Contains(Constants.APPLY)) allButtonsHovered[btn] = applyImg;
+        if (btnName.Contains(Constants.CANCEL)) allButtonsHovered[btn] = cancelImg;
     }
 
     public void OnButtonClicked(Button btn)

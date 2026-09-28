@@ -12,7 +12,8 @@ public class MenuButtonHandler : MonoBehaviour
     [SerializeField] private TimerScript pomodoroTimer;
     [SerializeField] private SessionHandler sessionHandler;
     [SerializeField] private ToDosScript toDosHandler;
-
+    [SerializeField] private SceneHandler sceneHandler;
+    
     [SerializeField] private GameObject menuButton;
     [SerializeField] private GameObject menuPanel;
 
@@ -36,24 +37,27 @@ public class MenuButtonHandler : MonoBehaviour
 
     public void SaveSession()
     {
-        string currentScene = SceneManager.GetActiveScene().name;
+        string currentScene = sceneHandler.GetCurrentScene().name;
         List<ToDos> currentToDos = toDosHandler.GetCurrentToDos();
         float currentTime = pomodoroTimer.GetCurrentTime();
+        // Modify this value getting seconds from UI ==>
+        float currentSeconds = 5;
+        //<==
         int currentPomodoros = SessionHandler.GetPomodorosCounter();
         List<ChatMessageData> currentConversation = poikiManager.GetConversationHistory();
 
-        savingManager.SaveCurrentState(currentScene, currentToDos, currentTime, currentPomodoros, currentConversation);
+        savingManager.SaveCurrentState(currentScene, currentToDos, currentTime, currentSeconds, currentPomodoros, currentConversation);
 
         Debug.Log("Game saved successfully.");
     }
-
+    
     public void LoadSession()
     {
         string savedScene = savingManager.GetSceneName();
 
-        if (string.IsNullOrEmpty(savedScene) || savedScene != SceneManager.GetActiveScene().name)
+        if (string.IsNullOrEmpty(savedScene) || savedScene != Constants.BALOON_SCENE)
         {
-            SceneManager.LoadScene(savedScene);
+            sceneHandler.SetScene(savedScene);
             return;
         }
 
@@ -64,6 +68,7 @@ public class MenuButtonHandler : MonoBehaviour
     {
         List<ToDos> savedToDos = savingManager.GetToDos();
         float savedTime = savingManager.GetTime();
+        float savedPause = savingManager.GetPause();
         int savedPomodoros = savingManager.GetPomodoros();
         List<ChatMessageData> savedConversation = savingManager.GetPoikiConversation();
 
@@ -72,7 +77,11 @@ public class MenuButtonHandler : MonoBehaviour
 
         if (savedTime >= 0)
             pomodoroTimer.SetCurrentTime(savedTime);
-
+        
+        if (savedPause >= 0)
+            Debug.Log($"Saved Pause: {savedPause}");
+            //pomodoroTimer.SetCurrentTime(savedTime);
+        
         if (savedPomodoros >= 0)
             sessionHandler.SetPomodorosCounter(savedPomodoros);
 

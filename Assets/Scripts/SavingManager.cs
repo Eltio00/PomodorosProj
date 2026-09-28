@@ -20,16 +20,18 @@ public class Data
 {
     public string sceneName;
     public List<ToDos> toDos;
+    public float pause;
     public float time;
     public int pomodoros;
     public List<ChatMessageData> poikiConversation = new List<ChatMessageData>();
 }
 public class SavingManager : MonoBehaviour
 {
-    public void SaveCurrentState(string currentSceneName, List<ToDos> currentToDos, float currentTime, int currentPomodoros, List<ChatMessageData> currentSessionMessages)
+    public void SaveCurrentState(string currentSceneName, List<ToDos> currentToDos, float currentTime, float currentPause,int currentPomodoros, List<ChatMessageData> currentSessionMessages)
     {
         Data savingData = new Data();
         savingData.sceneName = currentSceneName;
+        savingData.pause = currentPause;
         savingData.toDos = currentToDos;
         savingData.time = currentTime;
         savingData.pomodoros = currentPomodoros;
@@ -76,6 +78,17 @@ public class SavingManager : MonoBehaviour
         try
         {
             return JsonUtility.FromJson<Data>(File.ReadAllText(Path.Combine(Application.persistentDataPath, "pomodoro_save.json"))).time;
+        }
+        catch (System.Exception ex)
+        {
+
+            return -1;
+        }
+    }
+    public float GetPause() {
+        try
+        {
+            return JsonUtility.FromJson<Data>(File.ReadAllText(Path.Combine(Application.persistentDataPath, "pomodoro_save.json"))).pause;
         }
         catch (System.Exception ex)
         {

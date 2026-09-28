@@ -1,3 +1,4 @@
+using System.Data;
 using UnityEngine;
 
 public class Constants
@@ -41,7 +42,7 @@ public class Constants
     public const string PLAY = "Play_Button";
     public const string PLAY_HOVER = "Play_Button_Hover";
 
-    public const string QUIT = "Quit_Button";
+    public const string QUIT = "Quit";
     public const string QUIT_HOVER = "Quit_Button_Hover";
 
     public const string REMOVE = "Remove_ToDo";
@@ -62,9 +63,24 @@ public class Constants
     public const string VOLUME = "Volume";
     public const string VOLUME_HOVER = "Volume_Hover";
 
+    public const string NEW_SESSION = "New_Session";
+    public const string NEW_SESSION_HOVER = "New_Session_Hover";
+
     public const string DROPDOWN_BTN = "DropDownButton";
+
     public const string DROPDOWN_BTN_OPEN = "DropDownButtonOpen";
     public const string DROPDOWN_BTN_CLOSE = "DropDownButtonClose";
+
     public const string TODO_SCROLL = "ToDoScroll";
     public const string TODO_HANDLER_LAYOUT = "ButtonHandlerLayout";
+    public const string APPLY = "Apply";
+    public const string APPLY_HOVER = "Apply_Hover";
+    public const string CANCEL = "Cancel";
+    public const string CANCEL_HOVER = "Cancel_Hover";
+    public const string POPUP = "Popup";
+    
+    public const string BALOON_SCENE = "Baloon";
+    public const string SPACE_PORTAL_SCENE = "Space_Portal";
+    public const string MACHINE_HOUSE_SCENE = "Machine_House";
+    public const string ANDROMEDA_KATO_SCENE = "Andromeda_Katos";
 }
