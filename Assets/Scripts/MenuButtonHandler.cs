@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class MenuButtonHandler : MonoBehaviour
 {
@@ -17,32 +13,12 @@ public class MenuButtonHandler : MonoBehaviour
     [SerializeField] private GameObject menuButton;
     [SerializeField] private GameObject menuPanel;
 
-    [Header("Todo Handling")]
-    [SerializeField] private GameObject toDoContainer;
-    [SerializeField] private Sprite toDosSpriteCrouch;
-    [SerializeField] private Sprite toDosSprite;
-    [SerializeField] private GameObject toDosButtons;
-
-    private GameObject dropDownOpen;
-    private GameObject dropDownClose;
-    private GameObject toDosPanel;
-    
-    void Start()
-    {
-        dropDownOpen = GameObject.Find(Constants.DROPDOWN_BTN_OPEN);
-        dropDownClose = GameObject.Find(Constants.DROPDOWN_BTN_CLOSE);
-        toDosPanel = GameObject.Find(Constants.TODO_SCROLL);
-        Debug.Log($"Open: {dropDownOpen.name}; Close: {dropDownClose.name}; Panel: {toDosPanel.name}; Buttons: {toDosButtons.name}");
-    }
-
     public void SaveSession()
     {
         string currentScene = sceneHandler.GetCurrentScene().name;
         List<ToDos> currentToDos = toDosHandler.GetCurrentToDos();
         float currentTime = pomodoroTimer.GetCurrentTime();
-        // Modify this value getting seconds from UI ==>
-        float currentSeconds = 5;
-        //<==
+        float currentSeconds = pomodoroTimer.GetPauseTimer();
         int currentPomodoros = SessionHandler.GetPomodorosCounter();
         List<ChatMessageData> currentConversation = poikiManager.GetConversationHistory();
 
@@ -60,7 +36,7 @@ public class MenuButtonHandler : MonoBehaviour
             sceneHandler.SetScene(savedScene);
             return;
         }
-
+        sessionHandler.OpenFromLoad();
         RestoreSessionData();
     }
 
@@ -77,10 +53,14 @@ public class MenuButtonHandler : MonoBehaviour
 
         if (savedTime >= 0)
             pomodoroTimer.SetCurrentTime(savedTime);
-        
+        else
+            pomodoroTimer.SetCurrentTime(5f);
+
         if (savedPause >= 0)
-            Debug.Log($"Saved Pause: {savedPause}");
-            //pomodoroTimer.SetCurrentTime(savedTime);
+            pomodoroTimer.SetPauseTime(savedPause);
+        else
+            pomodoroTimer.SetPauseTime(5f);
+        
         
         if (savedPomodoros >= 0)
             sessionHandler.SetPomodorosCounter(savedPomodoros);
@@ -100,27 +80,5 @@ public class MenuButtonHandler : MonoBehaviour
     {
         menuPanel.SetActive(false);
         menuButton.SetActive(true);
-    }
-    public void OpenToDos()
-    {
-        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
-        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 200f);
-        //Image img = toDoContainer.GetComponent<Image>();
-        //img.sprite = toDosSpriteCrouch;
-        dropDownOpen.SetActive(false);
-        dropDownClose.SetActive(true);
-        toDosPanel.SetActive(true);
-        toDosButtons.SetActive(true);
-    }
-    public void CloseToDos()
-    {
-        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
-        //Image img = toDoContainer.GetComponent<Image>();
-        //img.sprite = toDosSprite;
-        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 780f);
-        dropDownOpen.SetActive(true);
-        dropDownClose.SetActive(false);
-        toDosPanel.SetActive(false);
-        toDosButtons.SetActive(false);
     }
 }

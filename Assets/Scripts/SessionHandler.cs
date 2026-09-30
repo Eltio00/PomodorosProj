@@ -33,6 +33,12 @@ public class SessionHandler : MonoBehaviour
         handlingPopUp.gameObject.SetActive(true);
     }
 
+    public void OpenFromLoad()
+    {
+        foreach (GameObject btn in timerBtns)  
+            btn.SetActive(true);
+        newSessionBtn.SetActive(false);
+    }
     public void AddPomodoros()
     {
         if (pomodorosCounter < 5)

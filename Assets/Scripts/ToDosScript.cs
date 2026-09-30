@@ -22,6 +22,25 @@ public class ToDosScript : MonoBehaviour
     private List<ToDos> currentToDos = new List<ToDos>();
     private GameObject itemToDelete;
 
+    [Header("Todo Handling")]
+    [SerializeField] private GameObject toDoContainer;
+    [SerializeField] private Sprite toDosSpriteCrouch;
+    [SerializeField] private Sprite toDosSprite;
+    [SerializeField] private GameObject toDosButtons;
+
+
+    private GameObject dropDownOpen;
+    private GameObject dropDownClose;
+    private GameObject toDosPanel;
+    
+    void Start()
+    {
+        dropDownOpen = GameObject.Find(Constants.DROPDOWN_BTN_OPEN);
+        dropDownClose = GameObject.Find(Constants.DROPDOWN_BTN_CLOSE);
+        toDosPanel = GameObject.Find(Constants.TODO_SCROLL);
+        Debug.Log($"Open: {dropDownOpen.name}; Close: {dropDownClose.name}; Panel: {toDosPanel.name}; Buttons: {toDosButtons.name}");
+    }
+    
     public void CheckItem(TMP_InputField inputField, bool isOn, ToDos toDo)
     {
         toDo.isCompleted = isOn;
@@ -133,5 +152,29 @@ public class ToDosScript : MonoBehaviour
                 toggle.isOn = true;
             }
         }
+    }
+    
+    public void OpenToDos()
+    {
+        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 780f);
+        Image img = toDoContainer.GetComponent<Image>(); 
+        img.sprite = toDosSprite;
+        dropDownOpen.SetActive(false);
+        dropDownClose.SetActive(true);
+        toDosPanel.SetActive(true);
+        toDosButtons.SetActive(true);
+    }
+    public void CloseToDos()
+    {
+        
+        RectTransform rect = toDoContainer.GetComponent<RectTransform>();
+        Image img = toDoContainer.GetComponent<Image>();
+        img.sprite = toDosSpriteCrouch;
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 180f);
+        dropDownOpen.SetActive(true);
+        dropDownClose.SetActive(false);
+        toDosPanel.SetActive(false);
+        toDosButtons.SetActive(false);
     }
 }

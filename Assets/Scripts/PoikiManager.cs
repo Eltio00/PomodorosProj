@@ -11,6 +11,7 @@ public class PoikiManager : MonoBehaviour
     [SerializeField] public RAG rag;
     [SerializeField] public LLMAgent llmAgent;
     [SerializeField] private string text;
+    [SerializeField] private SavingManager savingManager;
     private List<ChatMessageData> conversationHistory = new List<ChatMessageData>();
 
     [SerializeField] private PomodoroChatController pomodoroChatController;
@@ -23,6 +24,7 @@ public class PoikiManager : MonoBehaviour
 
     private Dictionary<string, HashSet<string>> notesIndex = new Dictionary<string, HashSet<string>>();
 
+    
     async void Start()
     {
         // set the save path BEFORE calling SaveHistory/LoadHistory
@@ -208,8 +210,30 @@ public class PoikiManager : MonoBehaviour
         conversationHistory = savedConversation ?? new List<ChatMessageData>();
         pomodoroChatController.RestoreConversationHistory(conversationHistory);
     }
-    public void DeleteConversations()
+    public void ClearConversation()
     {
-        
+        conversationHistory.Clear();
+
+        string chatHistoryPath = Path.Combine(Application.persistentDataPath, ChatHistoryFile);
+        if (File.Exists(chatHistoryPath))
+            File.Delete(chatHistoryPath);
+
+        savingManager.SavePoikiConversation(conversationHistory);
+
+        Debug.Log("Poiki conversation history cleared.");
+    }
+    
+    public void ClearAllNotes()
+    {
+        rag.Clear();
+        notesIndex.Clear();
+
+        string ragPath = RagDataFile;
+        rag.Save(RagDataFile);
+        string indexPath = Path.Combine(Application.persistentDataPath, NotesIndexFile);
+        if (File.Exists(indexPath))
+            File.Delete(indexPath);
+
+        Debug.Log("All Poiki notes cleared (all topics).");
     }
 }

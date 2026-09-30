@@ -34,7 +34,10 @@ public class TimerScript : MonoBehaviour
 
     void Update()
     {
-        if (popup != null && popup.gameObject.activeSelf)
+        if(popup == null)
+            return;
+        
+        if (popup.gameObject.activeSelf)
         {
             int minutes = 0;
             int seconds = 0;
@@ -188,10 +191,8 @@ public class TimerScript : MonoBehaviour
     public static bool IsPomoFinished() { return isPomoFinished; }
     public static void SetIsPomoFinished(bool finished) { isPomoFinished = finished; }
     public float GetCurrentTime() { return initialTimer; }
-    public void SetCurrentTime(float time)
-    {
-        initialTimer = time;
-    }
+    public void SetCurrentTime(float time) { initialTimer = time; }
+    public void SetPauseTime(float time) { pauseTimer = time; }
 
     public void Apply()
     {
@@ -206,4 +207,6 @@ public class TimerScript : MonoBehaviour
         popup.SetActive(false);
         _sessionHandler.QuitPopup();
     }
+    
+    public float GetPauseTimer() { return pauseTimer; }
 }

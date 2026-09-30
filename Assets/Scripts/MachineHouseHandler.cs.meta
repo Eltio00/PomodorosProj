@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f688bf4b7aa1e1f46a30dfe35c41b9c0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - gearSource: {fileID: 5038480253512305785, guid: efd3094a91204a84e92e48def7b3ff6c, type: 3}
+  - tonfSource1: {fileID: 2190556757209459762, guid: 8a19c06817265354e8d2c42d9b28bd82, type: 3}
+  - tonfSource2: {fileID: 6042409483748445959, guid: 413a2bca96715ad4a8c604512b844945, type: 3}
+  - tonfClip: {fileID: 8300000, guid: 279d0e174ac67a14c983b38dc0a54f2a, type: 3}
+  - gearClip: {fileID: 8300000, guid: 6020f14ff8cd2ef4483f87ddc6819c55, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

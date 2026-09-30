@@ -17,6 +17,9 @@ public class PomodoroChatController : MonoBehaviour
     [SerializeField] private Transform chatContent;
     [SerializeField] private ScrollRect scrollRect;
 
+    [Header("Notifications")]
+    [SerializeField] private GameObject confirmClearNotesPanel;
+    
     private string currentTeme = "General Study";
     private static List<char> currentText = new List<char>();
     private ChatBubble currentAssistantBubble = null;
@@ -166,5 +169,33 @@ public class PomodoroChatController : MonoBehaviour
     void ShowUserMessage(string message)
     {
         Debug.Log($"[User message] {message}");
+    }
+    
+    public void OnClearChatButtonClicked()
+    {
+        poikiManager.ClearConversation();
+        ClearChatUI();
+    }
+
+    private void ClearChatUI()
+    {
+        foreach (Transform child in chatContent)
+            Destroy(child.gameObject);
+    }
+    
+    public void OnClearNotesButtonClicked()
+    {
+        confirmClearNotesPanel.SetActive(true);
+    }
+
+    public void OnConfirmClearNotes()
+    {
+        poikiManager.ClearAllNotes();
+        confirmClearNotesPanel.SetActive(false);
+    }
+
+    public void OnCancelClearNotes()
+    {
+        confirmClearNotesPanel.SetActive(false);
     }
 }

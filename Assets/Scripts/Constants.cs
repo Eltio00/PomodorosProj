@@ -77,7 +77,10 @@ public class Constants
     public const string APPLY_HOVER = "Apply_Hover";
     public const string CANCEL = "Cancel";
     public const string CANCEL_HOVER = "Cancel_Hover";
-    public const string POPUP = "Popup";
+    public const string POPUP = "PopupNewSession";
+
+    public const string SFX_SLIDER = "AudioSliderSFX";
+    public const string MUSIC_SLIDER = "AudioSliderMusic";
     
     public const string BALOON_SCENE = "Baloon";
     public const string SPACE_PORTAL_SCENE = "Space_Portal";
