@@ -36,6 +36,7 @@ public class PomodoroChatController : MonoBehaviour
         txtFileType = NativeFilePicker.ConvertExtensionToFileType("txt");
         docxFileType = NativeFilePicker.ConvertExtensionToFileType("docx");
         mdFileType = NativeFilePicker.ConvertExtensionToFileType("md");
+        confirmClearNotesPanel.SetActive(false);
     }
 
     void Update()

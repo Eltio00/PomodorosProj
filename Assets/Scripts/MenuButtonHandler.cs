@@ -12,7 +12,7 @@ public class MenuButtonHandler : MonoBehaviour
     
     [SerializeField] private GameObject menuButton;
     [SerializeField] private GameObject menuPanel;
-
+    [SerializeField] private GameObject creditsPanel;
     public void SaveSession()
     {
         string currentScene = sceneHandler.GetCurrentScene().name;
@@ -80,5 +80,14 @@ public class MenuButtonHandler : MonoBehaviour
     {
         menuPanel.SetActive(false);
         menuButton.SetActive(true);
+    }
+
+    public void OpenCredits()
+    {
+        creditsPanel.SetActive(true);   
+    }
+    public void CloseCredits()
+    {
+        creditsPanel.SetActive(false);
     }
 }

@@ -9,9 +9,11 @@ public class AndromedaKatosSceneManager : MonoBehaviour
     void Awake()
     {
         StartMaterialMovement(0);
+        StartMaterialMovement(1);
+        StartMaterialMovement(2);
         StartMaterialMovement(3);
         StartMaterialMovement(4);
-        StartMaterialMovement(6);
+        StartMaterialMovement(5);
     }
 
     private Vector3 bubbleStartPos;
